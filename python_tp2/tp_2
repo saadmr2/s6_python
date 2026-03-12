@@ -1,0 +1,158 @@
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+
+
+class Boisson(ABC):
+    @abstractmethod
+    def cout(self):
+        pass
+
+    @abstractmethod
+    def description(self):
+        pass
+
+    def __add__(self, other):
+        if isinstance(other, Boisson):
+            return BoissonCombinee(self, other)
+        return NotImplemented
+
+
+class Cafe(Boisson):
+    def cout(self):
+        return 2.0
+
+    def description(self):
+        return "Café simple"
+
+
+class The(Boisson):
+    def cout(self):
+        return 1.5
+
+    def description(self):
+        return "Thé"
+
+
+class DecorateurBoisson(Boisson):
+    def __init__(self, boisson):
+        self.boisson = boisson
+
+
+class Lait(DecorateurBoisson):
+    def cout(self):
+        return self.boisson.cout() + 0.5
+
+    def description(self):
+        return self.boisson.description() + ", Lait"
+
+
+class Sucre(DecorateurBoisson):
+    def cout(self):
+        return self.boisson.cout() + 0.2
+
+    def description(self):
+        return self.boisson.description() + ", Sucre"
+
+
+class Caramel(DecorateurBoisson):
+    def cout(self):
+        return self.boisson.cout() + 0.7
+
+    def description(self):
+        return self.boisson.description() + ", Caramel"
+
+
+class BoissonCombinee(Boisson):
+    def __init__(self, boisson1, boisson2):
+        self.boisson1 = boisson1
+        self.boisson2 = boisson2
+
+    def cout(self):
+        return self.boisson1.cout() + self.boisson2.cout()
+
+    def description(self):
+        return self.boisson1.description() + " + " + self.boisson2.description()
+
+
+@dataclass
+class Client:
+    nom: str
+    numero: int
+    points_fidelite: int = 0
+
+
+class Commande:
+    def __init__(self, client):
+        self.client = client
+        self.boissons = []
+
+    def ajouter_boisson(self, boisson):
+        if isinstance(boisson, Boisson):
+            self.boissons.append(boisson)
+
+    def prix_total(self):
+        return sum(boisson.cout() for boisson in self.boissons)
+
+    def afficher(self):
+        print(f"Client : {self.client.nom} (N° {self.client.numero})")
+        print("Commande :")
+        for i, boisson in enumerate(self.boissons, start=1):
+            print(f"{i}. {boisson.description()} -> {boisson.cout():.1f}€")
+        print(f"Prix total : {self.prix_total():.1f}€")
+
+
+class CommandeSurPlace(Commande):
+    def afficher(self):
+        print("=== Commande sur place ===")
+        super().afficher()
+
+
+class CommandeEmporter(Commande):
+    def afficher(self):
+        print("=== Commande à emporter ===")
+        super().afficher()
+
+
+class Fidelite:
+    def ajouter_points(self, client, montant):
+        points = int(montant)
+        client.points_fidelite += points
+        return points
+
+
+class CommandeFidele(Commande, Fidelite):
+    def valider(self):
+        total = self.prix_total()
+        points = self.ajouter_points(self.client, total)
+        print(f"Commande validée. {points} points ajoutés au client {self.client.nom}.")
+
+
+if __name__ == "__main__":
+    client1 = Client("Saad Marzouq", 101)
+
+    boisson1 = Cafe()
+    boisson1 = Lait(boisson1)
+    boisson1 = Sucre(boisson1)
+
+    print("Commande :", boisson1.description())
+    print("Prix :", f"{boisson1.cout():.1f}€")
+    print()
+
+    boisson2 = The()
+    boisson2 = Caramel(boisson2)
+
+    menu = boisson1 + boisson2
+
+    print("Boisson combinée :")
+    print("Description :", menu.description())
+    print("Prix :", f"{menu.cout():.1f}€")
+    print()
+
+    commande = CommandeFidele(client1)
+    commande.ajouter_boisson(boisson1)
+    commande.ajouter_boisson(boisson2)
+    commande.ajouter_boisson(menu)
+
+    commande.afficher()
+    commande.valider()
+    print("Points de fidélité actuels :", client1.points_fidelite)
