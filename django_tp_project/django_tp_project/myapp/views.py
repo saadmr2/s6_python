@@ -7,8 +7,8 @@ from .models import Feature
 def index(request):
     features = Feature.objects.all()
     context = {
-        'name': 'SAAD MARZOUQ',
-        'age': 21,
+        'name': 'Sara',
+        'age': 30,
         'moroccan': True,
         'features': features,
     }
