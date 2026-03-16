@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Compteur{% endblock %}
+{% block content %}
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4 p-md-5">
+        <h2 class="mb-4">Résultat du compteur de mots</h2>
+        <p class="fs-5">Le texte contient <strong>{{ amount }}</strong> mot(s).</p>
+        <div class="bg-light rounded-4 p-3 my-4">
+            <h5>Texte envoyé :</h5>
+            <p class="mb-0">{{ text }}</p>
+        </div>
+        <a href="/" class="btn btn-primary">Retour à l'accueil</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Accueil{% endblock %}
+{% block content %}
+<section class="hero-box p-4 p-md-5 rounded-4 mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-7">
+            <span class="badge bg-light text-dark mb-3">TP Django</span>
+            <h1 class="display-5 fw-bold mb-3">Bienvenue sur la première page Django</h1>
+            <p class="lead mb-4">
+                Bonjour {{ name }}. Cette page affiche un template, un formulaire,
+                des liens d'authentification et des données venant du modèle <strong>Feature</strong>.
+            </p>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="/register" class="btn btn-primary btn-lg">Créer un compte</a>
+                <a href="/login" class="btn btn-outline-light btn-lg">Se connecter</a>
+            </div>
+        </div>
+        <div class="col-lg-5 mt-4 mt-lg-0">
+            <div class="stats-card">
+                <h5 class="mb-3">Données passées au template</h5>
+                <ul class="list-unstyled m-0">
+                    <li><strong>Nom :</strong> {{ name }}</li>
+                    <li><strong>Âge :</strong> {{ age }}</li>
+                    <li><strong>Marocaine :</strong> {{ moroccan }}</li>
+                    <li><strong>Utilisateur connecté :</strong> {{ user.is_authenticated }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 rounded-4 h-100">
+            <div class="card-body p-4">
+                <h3 class="mb-3">Compteur de mots</h3>
+                <form method="POST" action="counter">
+                    {% csrf_token %}
+                    <label class="form-label">Saisissez un texte :</label>
+                    <textarea name="text" rows="8" class="form-control mb-3" placeholder="Tapez votre texte ici..."></textarea>
+                    <button type="submit" class="btn btn-dark">Compter les mots</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 rounded-4 h-100">
+            <div class="card-body p-4">
+                <h3 class="mb-3">Fonctionnalités depuis la base de données</h3>
+                {% if features %}
+                    <div class="list-group list-group-flush">
+                        {% for feature in features %}
+                        <div class="list-group-item px-0">
+                            <h5 class="mb-1">{{ feature.name }}</h5>
+                            <p class="mb-0 text-muted">{{ feature.details }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">Aucune fonctionnalité ajoutée pour le moment. Ajoutez-en depuis l'interface admin.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
